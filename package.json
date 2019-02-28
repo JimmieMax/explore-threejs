@@ -1,0 +1,11 @@
+{
+  "name": "explore-threejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:JimmieMax/explore-threejs.git",
+  "author": "Jimmie Max",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.100.0"
+  }
+}
