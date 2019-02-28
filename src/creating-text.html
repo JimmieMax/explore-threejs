@@ -16,12 +16,102 @@
             display: block;
         }
     </style>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
 </head>
 
 <body>
     <div id="info">Description</div>
+    <script src="js/three.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
     <script>
-    new THREE.TextGeometry( text, parameters );
+        var camera, scene, renderer;
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.set(0, -400, 600);
+
+            var controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 0, 0);
+            controls.update();
+
+            renderer = new THREE.WebGLRenderer();
+
+            document.body.appendChild(renderer.domElement);
+
+            var loader = new THREE.FontLoader();
+            loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+                var xMid, text;
+                var color = 0x006699;
+                var matLite = new THREE.MeshBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: 0.4,
+                    side: THREE.DoubleSide
+                });
+                var message = "   Three.js\nSimple text.";
+                var shapes = font.generateShapes(message, 100);
+                var geometry = new THREE.ShapeBufferGeometry(shapes);
+                geometry.computeBoundingBox();
+                xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+                geometry.translate(xMid, 0, 0);
+                // make shape ( N.B. edge view not visible )
+                text = new THREE.Mesh(geometry, matLite);
+                text.position.z = -250;
+                scene.add(text);
+                // var text = new THREE.TextGeometry('Hello three.js!', {
+                //     font: font,
+                //     size: 80,
+                //     height: 5,
+                //     curveSegments: 12,
+                //     bevelEnabled: true,
+                //     bevelThickness: 10,
+                //     bevelSize: 8,
+                //     bevelSegments: 5,
+                //     color: 0x006699
+                // });
+                // scene.add(text);
+                renderer.render(scene, camera)
+            });
+
+        } // end init
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+
+            render();
+
+        }
+
+        function render() {
+
+            renderer.render(scene, camera);
+
+        }
     </script>
 </body>
 
