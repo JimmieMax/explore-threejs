@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>2018 世界GDP前十大国（单位/亿美元）</h1>
+    <div id="WebGL-output"></div>
+    <script type="text/javascript" src="js/three.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <script>
+        //     1、美国 195558.74亿美元(1222242.125亿元) 美洲
+
+        // 　　2、中国 131735.85亿美元 (827122亿元) 亚洲
+
+        // 　　3、日本 43421.6亿美元 (271385亿元) 亚洲
+
+        // 　　4、德国 35954.06亿美元 (224712.875亿元) 欧洲
+
+        // 　　5、英国 32322.81亿美元 (202017.5625亿元) 欧洲
+
+        // 　　6、印度 26074.09亿美元 (162963.0625亿元) 亚洲
+
+        // 　　7、法国 25865.68亿美元 (161660.5亿元) 欧洲
+
+        // 　　8、意大利 19329.38亿美元 (120808.625亿元) 欧洲
+
+        // 　　9、巴西 17592.67亿美元 (109954.1875亿元) 美洲
+
+        // 　　10、加拿大 16823.68亿美元 (105148亿元) 美洲    
+
+        var data = [{
+                country: "America",
+                GDP: 195558,
+                color: "white"
+            },
+            {
+                country: "China",
+                GDP: 131735,
+                color: "red"
+            },
+            {
+                country: "Japan",
+                GDP: 43421,
+                color: "orange"
+            },
+            {
+                country: "Germany",
+                GDP: 35954,
+                color: "black"
+            },
+            {
+                country: "England",
+                GDP: 32322,
+                color: "blue"
+            },
+            {
+                country: "India",
+                GDP: 26074,
+                color: "brown"
+            },
+            {
+                country: "France",
+                GDP: 25865,
+                color: "blue"
+            },
+            {
+                country: "Italy",
+                GDP: 19329,
+                color: "green"
+            },
+            {
+                country: "Brazil",
+                GDP: 17592,
+                color: "yellow"
+            },
+            {
+                country: "Canada",
+                GDP: 16823,
+                color: "red"
+            }
+        ]
+
+        //网页加载完毕后会被调用
+        function init() {
+            //创建一个场景（场景是一个容器，用于保存、跟踪所要渲染的物体和使用的光源）
+            var scene = new THREE.Scene();
+
+            //创建一个摄像机对象（摄像机决定了能够在场景里看到什么）
+            var camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 500);
+            //设置摄像机的位置，并让其指向场景的中心（0,0,0）
+            camera.position.set(-30, 40, 100);
+            camera.lookAt(scene.position);
+
+            //创建一个WebGL渲染器并设置其大小
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(new THREE.Color(0xEEEEEE));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            //创建一个平面
+            var planeGeometry = new THREE.PlaneGeometry(1000, 60);
+            //平面使用颜色为0xcccccc的基本材质
+            var planeMaterial = new THREE.MeshBasicMaterial({
+                color: 0xcccccc
+            });
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            //设置屏幕的位置和旋转角度
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.set(0, 0, 0);
+            //将平面添加场景中
+            scene.add(plane);
+
+            function createCubes(GDP, color, i) {
+                const gap = 5;
+                // for()
+                //创建一个立方体
+                const height = GDP / 10000;
+                const cubeGeometry = new THREE.BoxGeometry(4, height, 4);
+                //将线框（wireframe）属性设置为true，这样物体就不会被渲染为实物物体
+                const cubeMaterial = new THREE.MeshBasicMaterial({
+                    color,
+                    // wireframe: true
+                });
+                const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                //设置立方体的位置
+                cube.position.set(i * gap + 2 - 24, height / 2, 0);
+                //将立方体添加到场景中
+                scene.add(cube);
+            }
+
+            function createText(font, GDP, text, i) {
+                const gap = 5;
+                const height = GDP / 10000;
+                var geometry = new THREE.TextGeometry(text, {
+                    font: font,
+                    size: .8,
+                    height: .3,
+                });
+                var geometryGDP = new THREE.TextGeometry(GDP.toString(), {
+                    font: font,
+                    size: .8,
+                    height: .3,
+                });
+                //创建法向量材质
+                var meshMaterial = new THREE.MeshNormalMaterial({
+                    flatShading: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                var mesh = new THREE.Mesh(geometry, meshMaterial);
+                var meshGDP = new THREE.Mesh(geometryGDP, meshMaterial);
+                mesh.position.set(i * gap + 2 - 26, height + 1, 0);
+                meshGDP.position.set(i * gap + 2 - 26, height / 2, 2);
+                scene.add(mesh);
+                scene.add(meshGDP);
+            }
+
+            var loader = new THREE.FontLoader();
+            loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+                data.forEach(({
+                    GDP,
+                    color,
+                    country
+                }, i) => {
+                    
+                    createCubes(GDP, color, i);
+                    
+                    createText(font, GDP, country, i);
+
+                    //将渲染的结果输出到指定页面元素中
+                    document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+                    //渲染场景
+                    renderer.render(scene, camera);
+
+                    //设置鼠标操控
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.addEventListener('change', function () {
+                        renderer.render(scene, camera);
+                    }); // add this only if there is no animation loop (requestAnimationFrame)
+                });
+            });
+        }
+        //确保init方法在网页加载完毕后被调用
+        window.onload = init;
+    </script>
+</body>
+
+</html>

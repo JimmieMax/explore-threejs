@@ -2,6 +2,9 @@
   "name": "explore-threejs",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "http-server"
+  },
   "repository": "git@github.com:JimmieMax/explore-threejs.git",
   "author": "Jimmie Max",
   "license": "MIT",
